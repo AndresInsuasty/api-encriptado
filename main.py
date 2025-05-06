@@ -2,7 +2,7 @@ from fastapi import FastAPI
 
 app = FastAPI()
 
-def cesar_cipher(text: str, shift: int = 3) -> str:
+def cesar_cipher(text: str, shift: int = 5) -> str:
     """
     Aplica el cifrado César a un texto con un desplazamiento dado.
     Por defecto, el desplazamiento es 3.
@@ -17,14 +17,14 @@ def cesar_cipher(text: str, shift: int = 3) -> str:
     return ''.join(result)
 
 @app.post("/encrypt/")
-async def encrypt_word(palabra: str,clave: int = 3):
+async def encrypt_word(palabra: str,clave: int = 5):
     """
     Endpoint que recibe una palabra y la devuelve cifrada con el cifrado César.
     """
     encrypted_word = cesar_cipher(palabra, clave)
     return {"original": palabra, "encrypted": encrypted_word}
 
-def cesar_decipher(text: str, shift: int = 3) -> str:
+def cesar_decipher(text: str, shift: int = 5) -> str:
     """
     Aplica el descifrado César a un texto con un desplazamiento dado.
     Por defecto, el desplazamiento es 3.
@@ -32,7 +32,7 @@ def cesar_decipher(text: str, shift: int = 3) -> str:
     return cesar_cipher(text, -shift)
 
 @app.post("/decrypt/")
-async def decrypt_word(palabra: str, clave: int = 3):
+async def decrypt_word(palabra: str, clave: int = 5):
     """
     Endpoint que recibe una palabra cifrada y la devuelve descifrada con el cifrado César.
     """
