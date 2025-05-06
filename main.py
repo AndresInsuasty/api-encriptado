@@ -39,3 +39,7 @@ async def decrypt_word(palabra: str, clave: int = 3):
     decrypted_word = cesar_decipher(palabra, clave)
     return {"original": palabra, "decrypted": decrypted_word}
 
+import uvicorn
+
+if __name__ == "__main__":
+    uvicorn.run("main:app", host="0.0.0.0", port=8080)
