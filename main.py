@@ -1,11 +1,14 @@
 from fastapi import FastAPI
+import hashlib
+from fastapi import HTTPException
 
 app = FastAPI()
 
+#################################### Cifrado César ####################################
 def cesar_cipher(text: str, shift: int = 5) -> str:
     """
     Aplica el cifrado César a un texto con un desplazamiento dado.
-    Por defecto, el desplazamiento es 3.
+    Por defecto, el desplazamiento es 5.
     """
     result = []
     for char in text:
@@ -16,7 +19,7 @@ def cesar_cipher(text: str, shift: int = 5) -> str:
             result.append(char)
     return ''.join(result)
 
-@app.post("/encrypt/")
+@app.post("/codificar/",tags=["Cifrado"])
 async def encrypt_word(palabra: str,clave: int = 5):
     """
     Endpoint que recibe una palabra y la devuelve cifrada con el cifrado César.
@@ -27,17 +30,37 @@ async def encrypt_word(palabra: str,clave: int = 5):
 def cesar_decipher(text: str, shift: int = 5) -> str:
     """
     Aplica el descifrado César a un texto con un desplazamiento dado.
-    Por defecto, el desplazamiento es 3.
+    Por defecto, el desplazamiento es 5.
     """
     return cesar_cipher(text, -shift)
 
-@app.post("/decrypt/")
+@app.post("/decodificar/",tags=["Cifrado"])
 async def decrypt_word(palabra: str, clave: int = 5):
     """
     Endpoint que recibe una palabra cifrada y la devuelve descifrada con el cifrado César.
     """
     decrypted_word = cesar_decipher(palabra, clave)
     return {"original": palabra, "decrypted": decrypted_word}
+
+@app.post("/encriptar/",tags=["Encriptado"])
+async def sha256_encrypt(palabra: str):
+    """
+    Endpoint que recibe una palabra y devuelve su hash SHA-256.
+    """
+    sha256_hash = hashlib.sha256(palabra.encode()).hexdigest()
+    return {"original": palabra, "sha256_hash": sha256_hash}
+
+@app.post("/encriptar/verify/",tags=["Encriptado"])
+async def sha256_verify(palabra: str, hash: str):
+    """
+    Endpoint que verifica si una palabra coincide con un hash SHA-256 dado.
+    """
+    sha256_hash = hashlib.sha256(palabra.encode()).hexdigest()
+    if sha256_hash == hash:
+        return {"match": True, "message": "La palabra coincide con el hash proporcionado."}
+    else:
+        raise HTTPException(status_code=400, detail="La palabra no coincide con el hash proporcionado.")
+
 
 import uvicorn
 
